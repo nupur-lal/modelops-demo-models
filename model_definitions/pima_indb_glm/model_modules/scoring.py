@@ -64,7 +64,7 @@ def score(context: ModelContext, **kwargs):
     # PRIMARY INDEX ( job_id );
     predictions_pdf["json_report"] = ""
     predictions_pdf = predictions_pdf[["job_id", entity_key, target_name, "json_report"]]
-
+    print(predictions_pdf)
     copy_to_sql(
         df=predictions_pdf,
         schema_name=context.dataset_info.predictions_database,

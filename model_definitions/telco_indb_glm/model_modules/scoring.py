@@ -1,11 +1,14 @@
-from teradataml import copy_to_sql, DataFrame
+from teradataml import (
+    copy_to_sql,
+    DataFrame,
+    TDGLMPredict,
+    ScaleTransform
+)
 from aoa import (
     record_scoring_stats,
     aoa_create_context,
     ModelContext
 )
-
-import joblib
 import pandas as pd
 
 
@@ -13,7 +16,7 @@ def score(context: ModelContext, **kwargs):
 
     aoa_create_context()
 
-    model = joblib.load(f"{context.artifact_input_path}/model.joblib")
+    model = DataFrame(f"model_${context.model_version}")
 
     feature_names = context.dataset_info.feature_names
     target_name = context.dataset_info.target_names[0]
@@ -22,8 +25,26 @@ def score(context: ModelContext, **kwargs):
     features_tdf = DataFrame.from_query(context.dataset_info.sql)
     features_pdf = features_tdf.to_pandas(all_rows=True)
 
-    print("Scoring")
-    predictions_pdf = model.predict(features_pdf[feature_names])
+#     # Scaling the scoring set
+#     print ("Loading scaler...")
+#     scaler = DataFrame(f"scaler_${context.model_version}")
+
+#     scaled_features = ScaleTransform(
+#         data=features_tdf,
+#         object=scaler,
+#         accumulate = entity_key
+#     )
+    
+#     print("Scoring")
+    predictions = TDGLMPredict(
+        object=model,
+        #newdata=scaled_features.result,
+        newdata=features_tdf,
+        id_column=entity_key
+    )
+
+    print(predictions.result)
+    predictions_pdf = predictions.result.to_pandas(all_rows=True).rename(columns={"prediction": target_name}).astype(int)
 
     print("Finished Scoring")
 
@@ -46,12 +67,14 @@ def score(context: ModelContext, **kwargs):
     predictions_pdf["json_report"] = ""
     predictions_pdf = predictions_pdf[["job_id", entity_key, target_name, "json_report"]]
 
-    copy_to_sql(df=predictions_pdf,
-                schema_name=context.dataset_info.predictions_database,
-                table_name=context.dataset_info.predictions_table,
-                index=False,
-                if_exists="append")
-
+    copy_to_sql(
+        df=predictions_pdf,
+        schema_name=context.dataset_info.predictions_database,
+        table_name=context.dataset_info.predictions_table,
+        index=False,
+        if_exists="append"
+    )
+    
     print("Saved predictions in Teradata")
 
     # calculate stats
@@ -63,13 +86,3 @@ def score(context: ModelContext, **kwargs):
     """)
 
     record_scoring_stats(features_df=features_tdf, predicted_df=predictions_df, context=context)
-
-
-# Add code required for RESTful API
-class ModelScorer(object):
-
-    def __init__(self):
-        self.model = joblib.load("artifacts/input/model.joblib")
-
-    def predict(self, data):
-        return self.model.predict(data)
