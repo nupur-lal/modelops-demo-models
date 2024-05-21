@@ -44,13 +44,13 @@ def score(context: ModelContext, **kwargs):
     )
 
     print(predictions.result)
-    predictions_pdf = predictions.result.to_pandas(all_rows=True).rename(columns={"prediction": target_name}).astype(int)
+    predictions_pdf = predictions.result.to_pandas(all_rows=True).rename(columns={"prediction": target_name}).astype({target_name: 'int'})
 
     print("Finished Scoring")
 
     # store the predictions
-    predictions_pdf = pd.DataFrame(predictions_pdf, columns=[target_name])
-    predictions_pdf[entity_key] = features_pdf.index.values
+    #predictions_pdf = pd.DataFrame(predictions_pdf, columns=[target_name])
+    #predictions_pdf[entity_key] = features_pdf.index.values
     # add job_id column so we know which execution this is from if appended to predictions table
     predictions_pdf["job_id"] = context.job_id
 
