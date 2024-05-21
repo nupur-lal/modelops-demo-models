@@ -99,7 +99,7 @@ def evaluate(context: ModelContext, **kwargs):
         target_columns = [target_name,'prediction'],
         target_datatype = ["INTEGER"]
     )
-    print(predicted_data)
+    
     
     ClassificationEvaluator_obj = ClassificationEvaluator(
         data=predicted_data.result,

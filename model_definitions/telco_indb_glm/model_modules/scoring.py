@@ -43,7 +43,7 @@ def score(context: ModelContext, **kwargs):
         id_column=entity_key
     )
 
-    print(predictions.result)
+    
     predictions_pdf = predictions.result.to_pandas(all_rows=True).rename(columns={"prediction": target_name}).astype({target_name: 'int'})
 
     print("Finished Scoring")
