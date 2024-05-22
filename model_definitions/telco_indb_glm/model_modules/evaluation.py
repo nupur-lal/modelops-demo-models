@@ -109,19 +109,28 @@ def evaluate(context: ModelContext, **kwargs):
     )
 
     
-    metrics_pd = ClassificationEvaluator_obj.output_data.to_pandas()
+#     metrics_pd = ClassificationEvaluator_obj.output_data.to_pandas()
+
+#     evaluation = {
+#         'Accuracy': '{:.2f}'.format(metrics_pd.MetricValue[0]),
+#         'Micro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[1]),
+#         'Micro-Recall': '{:.2f}'.format(metrics_pd.MetricValue[2]),
+#         'Micro-F1': '{:.2f}'.format(metrics_pd.MetricValue[3]),
+#         'Macro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[4]),
+#         'Macro-Recall': '{:.2f}'.format(metrics_pd.MetricValue[5]),
+#         'Macro-F1': '{:.2f}'.format(metrics_pd.MetricValue[6]),
+#         'Weighted-Precision': '{:.2f}'.format(metrics_pd.MetricValue[7]),
+#         'Weighted-Recall': '{:.2f}'.format(metrics_pd.MetricValue[8]),
+#         'Weighted-F1': '{:.2f}'.format(metrics_pd.MetricValue[9]),
+#     }
+
+    eval_data = ClassificationEvaluator_obj.output_data.to_pandas().reset_index(drop=True)
 
     evaluation = {
-        'Accuracy': '{:.2f}'.format(metrics_pd.MetricValue[0]),
-        'Micro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[1]),
-        'Micro-Recall': '{:.2f}'.format(metrics_pd.MetricValue[2]),
-        'Micro-F1': '{:.2f}'.format(metrics_pd.MetricValue[3]),
-        'Macro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[4]),
-        'Macro-Recall': '{:.2f}'.format(metrics_pd.MetricValue[5]),
-        'Macro-F1': '{:.2f}'.format(metrics_pd.MetricValue[6]),
-        'Weighted-Precision': '{:.2f}'.format(metrics_pd.MetricValue[7]),
-        'Weighted-Recall': '{:.2f}'.format(metrics_pd.MetricValue[8]),
-        'Weighted-F1': '{:.2f}'.format(metrics_pd.MetricValue[9]),
+        'Accuracy': '{:.2f}'.format(eval_data[eval_data.Metric.str.startswith('Accuracy')].MetricValue.item()),
+        'Micro-Precision': '{:.2f}'.format(eval_data[eval_data.Metric.str.startswith('Micro-Precision')].MetricValue.item()),
+        'Micro-Recall': '{:.2f}'.format(eval_data[eval_data.Metric.str.startswith('Micro-Recall')].MetricValue.item()),
+        'Micro-F1': '{:.2f}'.format(eval_data[eval_data.Metric.str.startswith('Micro-F1')].MetricValue.item())
     }
 
     with open(f"{context.artifact_output_path}/metrics.json", "w+") as f:
