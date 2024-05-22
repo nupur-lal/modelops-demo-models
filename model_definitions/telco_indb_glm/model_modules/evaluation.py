@@ -23,8 +23,8 @@ def plot_feature_importance(fi, img_filename):
     import pandas as pd
     import matplotlib.pyplot as plt
     feat_importances = pd.Series(fi)
-    feat_importances.nlargest(30).plot(kind='barh').set_title('Feature Importance')
-    #feat_importances.nlargest(10).plot(kind='barh').set_title('Feature Importance')
+    #feat_importances.nlargest(30).plot(kind='barh').set_title('Feature Importance')
+    feat_importances.nlargest(10).plot(kind='barh').set_title('Feature Importance')
     fig = plt.gcf()
     fig.savefig(img_filename, dpi=500)
     plt.clf()
@@ -105,9 +105,10 @@ def evaluate(context: ModelContext, **kwargs):
         data=predicted_data.result,
         observation_column=target_name,
         prediction_column='prediction',
-        num_labels=2
+        labels = ['0', '1']
     )
 
+    
     metrics_pd = ClassificationEvaluator_obj.output_data.to_pandas()
 
     evaluation = {
