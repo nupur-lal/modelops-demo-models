@@ -50,7 +50,8 @@ def train(context: ModelContext, **kwargs):
         iter_num_no_change = context.hyperparams["iter_num_no_change"]
     )
     
-    model.result.to_sql(f"model_${context.model_version}", if_exists="replace")    
+    model.result.to_sql(f"model_${context.model_version}", if_exists="replace") 
+    
     print("Saved trained model")
 
     # Calculate feature importance and generate plot
