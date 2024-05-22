@@ -92,11 +92,12 @@ def evaluate(context: ModelContext, **kwargs):
         data=predicted_data.result,
         observation_column=target_name,
         prediction_column='prediction',
-        labels = ['0', '1']
+        labels = ['0', '1'],
+        persist = True
     )
 
     metrics_pd = ClassificationEvaluator_obj.output_data.to_pandas()
-
+    copy_to_sql(df=metrics_pd, table_name="metric_test_table", index=False, if_exists="replace")
     evaluation = {
         'Accuracy': '{:.2f}'.format(metrics_pd.MetricValue[0]),
         'Micro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[1]),
