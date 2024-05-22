@@ -85,15 +85,15 @@ def evaluate(context: ModelContext, **kwargs):
     predicted_data = ConvertTo(
         data = predictions.result,
         target_columns = [target_name,'prediction'],
-        target_datatype = ["INTEGER"]
+        target_datatype = ["INTEGER"],
+        persist = True
     )
 
     ClassificationEvaluator_obj = ClassificationEvaluator(
         data=predicted_data.result,
         observation_column=target_name,
         prediction_column='prediction',
-        labels = ['0', '1'],
-        persist = True
+        labels = ['0', '1']
     )
 
     metrics_pd = ClassificationEvaluator_obj.output_data.to_pandas()
