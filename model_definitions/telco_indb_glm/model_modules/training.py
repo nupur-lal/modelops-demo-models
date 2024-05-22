@@ -17,7 +17,6 @@ def plot_feature_importance(fi, img_filename):
     import pandas as pd
     import matplotlib.pyplot as plt
     feat_importances = pd.Series(fi)
-    #feat_importances.nlargest(30).plot(kind='barh').set_title('Feature Importance')
     feat_importances.nlargest(10).plot(kind='barh').set_title('Feature Importance')
     fig = plt.gcf()
     fig.savefig(img_filename, dpi=500)
@@ -30,32 +29,11 @@ def train(context: ModelContext, **kwargs):
     feature_names = context.dataset_info.feature_names
     target_name = context.dataset_info.target_names[0]
     entity_key = context.dataset_info.entity_key
-    #cat_names = context.dataset_info.cat_names
 
     # read training dataset from Teradata and convert to pandas
     train_df = DataFrame.from_query(context.dataset_info.sql)
-    
-#     print ("Scaling using InDB Functions...")
-    
-#     scaler = ScaleFit(
-#         data=train_df,
-#         target_columns = feature_names,
-#         scale_method = context.hyperparams["scale_method"],
-#         miss_value = context.hyperparams["miss_value"],
-#         global_scale = context.hyperparams["global_scale"].lower() in ['true', '1'],
-#         multiplier = context.hyperparams["multiplier"],
-#         intercept = context.hyperparams["intercept"]
-#     )
 
-#     scaled_train = ScaleTransform(
-#         data=train_df,
-#         object=scaler.output,
-#         accumulate = [target_name,entity_key]
-#     )
-    
-#    scaler.output.to_sql(f"scaler_${context.model_version}", if_exists="replace")
-#    print("Saved scaler")
-    
+  
     print("Starting training...")
 
     model = GLM(

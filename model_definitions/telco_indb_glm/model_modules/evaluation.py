@@ -23,7 +23,6 @@ def plot_feature_importance(fi, img_filename):
     import pandas as pd
     import matplotlib.pyplot as plt
     feat_importances = pd.Series(fi)
-    #feat_importances.nlargest(30).plot(kind='barh').set_title('Feature Importance')
     feat_importances.nlargest(10).plot(kind='barh').set_title('Feature Importance')
     fig = plt.gcf()
     fig.savefig(img_filename, dpi=500)
@@ -74,17 +73,6 @@ def evaluate(context: ModelContext, **kwargs):
 
     test_df = DataFrame.from_query(context.dataset_info.sql)
 
-#     # Scaling the test set
-#     print ("Loading scaler...")
-#     scaler = DataFrame(f"scaler_${context.model_version}")
-
-#     scaled_test = ScaleTransform(
-#         data=test_df,
-#         object=scaler,
-#         accumulate = [target_name,entity_key]
-#     )
-    
-#     print("Scoring")
     predictions = TDGLMPredict(
         object=model,
         newdata=test_df,
@@ -99,38 +87,27 @@ def evaluate(context: ModelContext, **kwargs):
         target_columns = [target_name,'prediction'],
         target_datatype = ["INTEGER"]
     )
-    
-    
+
     ClassificationEvaluator_obj = ClassificationEvaluator(
         data=predicted_data.result,
         observation_column=target_name,
         prediction_column='prediction',
-        labels = ['0', '1']
+        num_labels=2
     )
 
-    
-#     metrics_pd = ClassificationEvaluator_obj.output_data.to_pandas()
-
-#     evaluation = {
-#         'Accuracy': '{:.2f}'.format(metrics_pd.MetricValue[0]),
-#         'Micro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[1]),
-#         'Micro-Recall': '{:.2f}'.format(metrics_pd.MetricValue[2]),
-#         'Micro-F1': '{:.2f}'.format(metrics_pd.MetricValue[3]),
-#         'Macro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[4]),
-#         'Macro-Recall': '{:.2f}'.format(metrics_pd.MetricValue[5]),
-#         'Macro-F1': '{:.2f}'.format(metrics_pd.MetricValue[6]),
-#         'Weighted-Precision': '{:.2f}'.format(metrics_pd.MetricValue[7]),
-#         'Weighted-Recall': '{:.2f}'.format(metrics_pd.MetricValue[8]),
-#         'Weighted-F1': '{:.2f}'.format(metrics_pd.MetricValue[9]),
-#     }
-
-    eval_data = ClassificationEvaluator_obj.output_data.to_pandas().reset_index(drop=True)
+    metrics_pd = ClassificationEvaluator_obj.output_data.to_pandas()
 
     evaluation = {
-        'Accuracy': '{:.2f}'.format(eval_data[eval_data.Metric.str.startswith('Accuracy')].MetricValue.item()),
-        'Micro-Precision': '{:.2f}'.format(eval_data[eval_data.Metric.str.startswith('Micro-Precision')].MetricValue.item()),
-        'Micro-Recall': '{:.2f}'.format(eval_data[eval_data.Metric.str.startswith('Micro-Recall')].MetricValue.item()),
-        'Micro-F1': '{:.2f}'.format(eval_data[eval_data.Metric.str.startswith('Micro-F1')].MetricValue.item())
+        'Accuracy': '{:.2f}'.format(metrics_pd.MetricValue[0]),
+        'Micro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[1]),
+        'Micro-Recall': '{:.2f}'.format(metrics_pd.MetricValue[2]),
+        'Micro-F1': '{:.2f}'.format(metrics_pd.MetricValue[3]),
+        'Macro-Precision': '{:.2f}'.format(metrics_pd.MetricValue[4]),
+        'Macro-Recall': '{:.2f}'.format(metrics_pd.MetricValue[5]),
+        'Macro-F1': '{:.2f}'.format(metrics_pd.MetricValue[6]),
+        'Weighted-Precision': '{:.2f}'.format(metrics_pd.MetricValue[7]),
+        'Weighted-Recall': '{:.2f}'.format(metrics_pd.MetricValue[8]),
+        'Weighted-F1': '{:.2f}'.format(metrics_pd.MetricValue[9]),
     }
 
     with open(f"{context.artifact_output_path}/metrics.json", "w+") as f:
