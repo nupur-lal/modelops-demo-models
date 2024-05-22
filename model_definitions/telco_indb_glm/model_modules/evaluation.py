@@ -92,7 +92,7 @@ def evaluate(context: ModelContext, **kwargs):
         data=predicted_data.result,
         observation_column=target_name,
         prediction_column='prediction',
-        num_labels=2
+        labels = ['0', '1']
     )
 
     metrics_pd = ClassificationEvaluator_obj.output_data.to_pandas()
