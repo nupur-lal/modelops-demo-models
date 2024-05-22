@@ -79,14 +79,14 @@ def evaluate(context: ModelContext, **kwargs):
         accumulate=target_name,
         id_column=entity_key,
         output_prob=True,
-        output_responses=['0','1']
+        output_responses=['0','1'],
+        persist = True
     )
 
     predicted_data = ConvertTo(
         data = predictions.result,
         target_columns = [target_name,'prediction'],
-        target_datatype = ["INTEGER"],
-        persist = True
+        target_datatype = ["INTEGER"]
     )
 
     ClassificationEvaluator_obj = ClassificationEvaluator(
