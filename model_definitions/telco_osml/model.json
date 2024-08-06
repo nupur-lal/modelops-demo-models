@@ -1,0 +1,6 @@
+{
+    "id": "4ea892bb-9bfc-4a87-948f-abad3e69c1f0",
+    "name": "TelcoChurn using teradataml OpenSource LogisticRegression",
+    "description": "teradataml OpenSource LogisticRegression for TelcoChurn Predictions",
+    "language": "python"
+}
