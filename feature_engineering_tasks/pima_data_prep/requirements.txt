@@ -2,4 +2,3 @@ teradatamodelops
 teradataml
 pandas
 numpy
-os
