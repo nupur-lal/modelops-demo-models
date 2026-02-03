@@ -2,12 +2,14 @@
 from teradataml import *
 from aoa import (aoa_create_context, ModelContext)
 import pandas as pd
+import os
 import numpy as np
 
 def run_task(context: ModelContext, **kwargs):
     aoa_create_context()
     df = DataFrame.from_query("SELECT * FROM DEMO_ModelOps.pima_patient_features")
-
+    print(os.environ.get("temp_db")
+    print(os.environ.get("view_db")      
     scale_fit = ScaleFit(
         data=df,
         target_columns=["1:"],
