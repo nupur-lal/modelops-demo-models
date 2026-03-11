@@ -16,7 +16,7 @@ from teradatasqlalchemy import INTEGER
 
 
 def score(context: ModelContext, **kwargs):
-    
+
     aoa_create_context()
 
     # Load the trained model from SQL
@@ -31,7 +31,7 @@ def score(context: ModelContext, **kwargs):
     test_df = DataFrame.from_query(context.dataset_info.sql)
     features_tdf = DataFrame.from_query(context.dataset_info.sql)
     # features_pdf = features_tdf.to_pandas(all_rows=True)
-    
+
     # Scaling the test set
     print ("Loading scaler...")
     scaler = DataFrame(f"scaler_${context.model_version}")
@@ -42,7 +42,7 @@ def score(context: ModelContext, **kwargs):
         object=scaler,
         accumulate = entity_key
     )
-    
+
     print("Scoring...")
     # Make predictions using the XGBoostPredict function
     predictions = XGBoostPredict(
@@ -54,8 +54,8 @@ def score(context: ModelContext, **kwargs):
         output_responses=['0','1'],
         object_order_column=['task_index', 'tree_num', 'iter', 'class_num', 'tree_order']
     )
-    
-    
+
+
     # store the predictions
     predictions_df = predictions.result
     predictions_pdf = predictions_df.assign(drop_columns=True,
@@ -63,12 +63,12 @@ def score(context: ModelContext, **kwargs):
                                              PatientId=predictions_df.PatientId,
                                              HasDiabetes=predictions_df.Prediction.cast(type_=INTEGER),
                                              json_report=translate("  "))
-                                             
-    
-    
+
+
+
     print("Finished Scoring")
 
-    
+
 #     # teradataml doesn't match column names on append.. and so to match / use same table schema as for byom predict
 #     # example (see README.md), we must add empty json_report column and change column order manually (v17.0.0.4)
 #     # CREATE MULTISET TABLE pima_patient_predictions
@@ -89,7 +89,7 @@ def score(context: ModelContext, **kwargs):
         index=False,
         if_exists="append"
     )
-    
+
     print("Saved predictions in Teradata")
 
     # calculate stats
