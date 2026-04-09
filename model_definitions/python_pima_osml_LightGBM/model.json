@@ -1,0 +1,6 @@
+{
+    "id": "63b8b107-9a02-4db3-b436-07397cecf665",
+    "name": "Diabetes Prediction using teradataml OpenSource LightGBMClassifier",
+    "description": "teradataml OpenSource LightGBMClassifier for Diabetes Predictions",
+    "language": "python"
+}
